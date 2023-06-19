@@ -1,0 +1,10 @@
+const jwt = require('jsonwebtoken');
+
+const accessToken = 'ya29.a0AWY7CkmEKSx2l-iLmzLFozNP0LcRU_llLgWQ6OKPrE8JdPWj-2NCgC-ish9dBcV6V7w2L882O8mYn9e2IIbAYRJ8TcF58A8rW1pgddpF9QSjOG_mY-eCeclAiusCu4LkcJjRKgkGgt-zEg1bCdCbYRnAvTaqaCgYKAf0SARASFQG1tDrppfItMwRPDJ184gRgWifHMw0163'; // Replace with your actual access token
+const decodedToken = jwt.decode(accessToken);
+
+if (decodedToken && decodedToken.scope) {
+  console.log('Access token scope:', decodedToken.scope);
+} else {
+  console.log('Access token does not contain scope information');
+}
