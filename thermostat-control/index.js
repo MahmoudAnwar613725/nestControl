@@ -5,21 +5,24 @@ const { google } = require('googleapis');
 
 const app = express();
 const port = 3000; // You can change the port number if desired
-
+const accessToken = 'ya29.a0AWY7CknAwKHS9s_PLFg7Azuhw1iQYrE07EX4xK-gNXlWCMEk274u7zHKVReDJ5RtGekjD6LZ4kkbqk_bQ7LqZno9zDHuYh5Mne6Hw-KkSJa55-1ospmWBxyOdtRN_tS8uzuIQ9yFA9oo0s0Rcckxlv4SaiMVaCgYKAcsSARASFQG1tDrpfNbjPPnHGSiAHiRNuxDdBQ0163';
+const refreshToken = '1//0fvnGiHt9g5rpCgYIARAAGA8SNwF-L9IrLqzbpY-LnIp46cVniFQxtBU3BX3hU7vPao0y06XyFnYjXapQq9KO83pgAc4wzgMOL78'
+const projectId = '989bbf7c-d867-4f93-8058-8650999e3714';
+const deviceId = 'CCA7C10000203971'
 // Parse JSON request bodies
 app.use(express.json());
 
 // Set up authentication
 const authClient = new google.auth.OAuth2(
-  '897629560316-3skl55d8grcge37ucr9talhevei99k2k.apps.googleusercontent.com',
-  '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',
+  '897629560316-3skl55d8grcge37ucr9talhevei99k2k.apps.googleusercontent.com', //clientID
+  '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', //clientSecrent
   'http://localhost:3000/auth/callback' // Replace with your actual redirect URI
 );
 
 // Set access token and refresh token
 authClient.setCredentials({
-  access_token: 'ya29.a0AWY7CkmEKSx2l-iLmzLFozNP0LcRU_llLgWQ6OKPrE8JdPWj-2NCgC-ish9dBcV6V7w2L882O8mYn9e2IIbAYRJ8TcF58A8rW1pgddpF9QSjOG_mY-eCeclAiusCu4LkcJjRKgkGgt-zEg1bCdCbYRnAvTaqaCgYKAf0SARASFQG1tDrppfItMwRPDJ184gRgWifHMw0163',
-  refresh_token: '1//0f6f6ljj80UDECgYIARAAGA8SNwF-L9IrBFqz81aZz25csbFq-dhkQcVN8YlDlMNZNuJQdzvH1jmqLvbGA1-JdSWFBhhAfdh3TDc',
+  access_token: accessToken,
+  refresh_token: refreshToken,
 });
 
 // Add routes for authorization
@@ -68,7 +71,7 @@ app.get('/auth/callback', async (req, res) => {
     const smartDeviceManagement = google.smartdevicemanagement('v1');
 
     const request = {
-      name: 'enterprises/989bbf7c-d867-4f93-8058-8650999e3714/devices/AVPHwEtbj6YncuKzPxL8Kdmb-EpYAXuJTRD2cR16_801wC99-1gnKqeydO-GMqTvri0dR2xg2s7jMSZZPcBvUKmhSG5Yvg',
+      name: `enterprises/${projectId}/devices/AVPHwEtbj6YncuKzPxL8Kdmb-EpYAXuJTRD2cR16_801wC99-1gnKqeydO-GMqTvri0dR2xg2s7jMSZZPcBvUKmhSG5Yvg`,
       requestBody: {
         command: 'thermostatTemperatureSetpoint',
         params: {
@@ -99,14 +102,12 @@ app.get('/auth/callback', async (req, res) => {
 
 // Function to set the thermostat mode with temperature in Fahrenheit
 async function setThermostatMode(deviceId, mode, temperatureFahrenheit) {
-  const accessToken = 'ya29.a0AWY7CkmEKSx2l-iLmzLFozNP0LcRU_llLgWQ6OKPrE8JdPWj-2NCgC-ish9dBcV6V7w2L882O8mYn9e2IIbAYRJ8TcF58A8rW1pgddpF9QSjOG_mY-eCeclAiusCu4LkcJjRKgkGgt-zEg1bCdCbYRnAvTaqaCgYKAf0SARASFQG1tDrppfItMwRPDJ184gRgWifHMw0163'; // Replace with your access token
-  const projectId = '989bbf7c-d867-4f93-8058-8650999e3714'
- // const url = `https://smartdevicemanagement.googleapis.com/v1/enterprises/enterpriseId/devices/${deviceId}:executeCommand`;
+   // const url = `https://smartdevicemanagement.googleapis.com/v1/enterprises/enterpriseId/devices/${deviceId}:executeCommand`;
   const url = `https://smartdevicemanagement.googleapis.com/v1/projects/${projectId}/devices/${deviceId}:executeComman`;
 
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ya29.a0AWY7Ckmv5ew_HHrFVqhsk5tXjGKA96n5hMqJ2DeKBKoNt2G0BXAYR-QycYw3q5MoyyU65vAyuF74yKh8lrvtex3O5dX-TKqhxruVSmbpedBCDehUvzRZ2IldjhiZQa4NWqBH5jfF2tcIzKfMLkMURB5MVNDEaCgYKAWYSARISFQG1tDrpzZ7gTZ9s3SkZQZhCVnJW4Q0163'
+    Authorization: `Bearer ${accessToken}`
   };
 
   const requestBody = {
@@ -154,12 +155,11 @@ app.post('/api/setTemperature', async (req, res) => {
   // Replace with the actual API endpoint provided by the smart home platform
  // const apiUrl = 'https://api.example.com/setTemperature';
   const apiUrl = `https://smartdevicemanagement.googleapis.com/v1/enterprises/*/devices/${deviceId}:executeCommand`;
-  const accessToken = 'ya29.a0AWY7CkmEKSx2l-iLmzLFozNP0LcRU_llLgWQ6OKPrE8JdPWj-2NCgC-ish9dBcV6V7w2L882O8mYn9e2IIbAYRJ8TcF58A8rW1pgddpF9QSjOG_mY-eCeclAiusCu4LkcJjRKgkGgt-zEg1bCdCbYRnAvTaqaCgYKAf0SARASFQG1tDrppfItMwRPDJ184gRgWifHMw0163'; // Replace with your access token
-
+ 
   // Replace with the appropriate authentication headers or access token
   const headers = {
     'Content-Type': 'application/json',
-    Authorization: 'Bearer ya29.a0AWY7CkmEKSx2l-iLmzLFozNP0LcRU_llLgWQ6OKPrE8JdPWj-2NCgC-ish9dBcV6V7w2L882O8mYn9e2IIbAYRJ8TcF58A8rW1pgddpF9QSjOG_mY-eCeclAiusCu4LkcJjRKgkGgt-zEg1bCdCbYRnAvTaqaCgYKAf0SARASFQG1tDrppfItMwRPDJ184gRgWifHMw0163'   ,
+    Authorization: `Bearer ${accessToken}`   ,
   };
 
   // Prepare the request payload
@@ -201,6 +201,46 @@ app.post('/api/setTemperature', async (req, res) => {
 });
 
 
+function celsiusToFahrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+
+app.put('/api/thermostats/:mode/:temperature', async (req, res) => {
+  const { mode, temperature } = req.params;
+
+  const targetTemperatureFahrenheit = parseFloat(temperature);
+  
+  if (isNaN(targetTemperatureFahrenheit)) {
+    res.status(400).json({ error: 'Invalid temperature value' });
+    return;
+  }
+
+  try {
+    const response = await axios.put(`https://smartdevicemanagement.googleapis.com/v1/enterprises/${projectId}/devices/${deviceId}`, {
+      traits: {
+        'sdm.devices.traits.ThermostatMode': {
+          'mode': mode.toLowerCase(),
+        },
+        'sdm.devices.traits.TemperatureSetpoint': {
+          'coolCelsius': null,
+          'coolFahrenheit': targetTemperatureFahrenheit,
+          'heatCelsius': null,
+          'heatFahrenheit': targetTemperatureFahrenheit
+        }
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.json({ message: 'Thermostat settings updated successfully' });
+  } catch (error) {
+    console.error('Error setting thermostat settings:', error);
+    res.status(500).json({ error: 'An error occurred while setting thermostat settings' });
+  }
+});
 
 
 app.get('/api/devices', async (req, res) => {
@@ -208,7 +248,7 @@ app.get('/api/devices', async (req, res) => {
     const smartDeviceManagement = google.smartdevicemanagement('v1');
 
     const request = {
-      parent: 'enterprises/989bbf7c-d867-4f93-8058-8650999e3714/devices',
+      parent: `enterprises/${projectId}/devices`,
     };
 
     // Send the API request to get the device list
@@ -219,6 +259,23 @@ app.get('/api/devices', async (req, res) => {
   } catch (error) {
     console.error('Error retrieving device list:', error);
     res.status(500).json({ error: 'Failed to retrieve device list' });
+  }
+});
+
+app.get('/api/thermostats', async (req, res) => {
+  try {
+    const response = await axios.get(`https://smartdevicemanagement.googleapis.com/v1/enterprises/${projectId}/devices`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    // Process the response and retrieve thermostat devices
+    const thermostatDevices = response.data.devices.filter(device => device.type === 'sdm.devices.types.THERMOSTAT');
+    res.json(thermostatDevices);
+  } catch (error) {
+    console.error('Error retrieving thermostat devices:', error.response.data.error);
+    res.status(500).json({ error: 'An error occurred while retrieving thermostat devices' });
   }
 });
 
